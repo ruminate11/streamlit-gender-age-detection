@@ -4,14 +4,14 @@ import streamlit as st
 import gdown
 import os
 from detect import detect_gender_age  # Assuming you have this in detect.py
+from dotenv import load_dotenv  # For loading environment variables
 
-# Google Drive file IDs for the models
-file_id_1 = '1xEe2isH9MATXxf8tQJkxPNtgXKBG4-20'  # Age model
-file_id_2 = '1R7YOFev-OIqJyPodGyaPFAgQgNoVrrwb'  # Gender model
+# Load environment variables from .env file
+load_dotenv()
 
-# Google Drive URLs for the models
-url_1 = f'https://drive.google.com/uc?id={file_id_1}'
-url_2 = f'https://drive.google.com/uc?id={file_id_2}'
+# Get the model URLs from environment variables
+url_1 = os.getenv('AGE_MODEL_URL')
+url_2 = os.getenv('GENDER_MODEL_URL')
 
 # Paths to save the models
 age_model_path = 'age_net.caffemodel'
