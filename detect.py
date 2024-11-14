@@ -19,27 +19,43 @@ gender_proto_path = 'gender_deploy.prototxt'
 # Check if the models already exist, if not, download them
 if not os.path.exists(age_model_path):
     print("Downloading age model...")
-    gdown.download(url_1, age_model_path, quiet=False)
+    try:
+        gdown.download(url_1, age_model_path, quiet=False)
+    except Exception as e:
+        print(f"Error downloading age model: {e}")
 
 if not os.path.exists(gender_model_path):
     print("Downloading gender model...")
-    gdown.download(url_2, gender_model_path, quiet=False)
+    try:
+        gdown.download(url_2, gender_model_path, quiet=False)
+    except Exception as e:
+        print(f"Error downloading gender model: {e}")
 
 # Check if proto files exist, if not, download them
 if not os.path.exists(age_proto_path):
     print("Downloading age proto file...")
-    gdown.download('https://drive.google.com/uc?id=1gscbHGvMwUlo8uLVD68vA64Ej_xiSxj9', age_proto_path, quiet=False)
+    try:
+        gdown.download('https://drive.google.com/uc?id=1gscbHGvMwUlo8uLVD68vA64Ej_xiSxj9', age_proto_path, quiet=False)
+    except Exception as e:
+        print(f"Error downloading age proto: {e}")
 
 if not os.path.exists(gender_proto_path):
     print("Downloading gender proto file...")
-    gdown.download('https://drive.google.com/uc?id=1X2Q5NvwItZodqGlOa_y7tU71dTAswb6q', gender_proto_path, quiet=False)
+    try:
+        gdown.download('https://drive.google.com/uc?id=1X2Q5NvwItZodqGlOa_y7tU71dTAswb6q', gender_proto_path, quiet=False)
+    except Exception as e:
+        print(f"Error downloading gender proto: {e}")
 
 # Load pre-trained models for face, age, and gender detection
-faceProto = "opencv_face_detector.pbtxt"
-faceModel = "opencv_face_detector_uint8.pb"
-ageNet = cv2.dnn.readNet(age_model_path, age_proto_path)
-genderNet = cv2.dnn.readNet(gender_model_path, gender_proto_path)
-faceNet = cv2.dnn.readNet(faceModel, faceProto)
+try:
+    faceProto = "opencv_face_detector.pbtxt"
+    faceModel = "opencv_face_detector_uint8.pb"
+    ageNet = cv2.dnn.readNet(age_model_path, age_proto_path)
+    genderNet = cv2.dnn.readNet(gender_model_path, gender_proto_path)
+    faceNet = cv2.dnn.readNet(faceModel, faceProto)
+except Exception as e:
+    print(f"Error loading models: {e}")
+    exit()
 
 MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
 ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)', '(25-32)', '(38-43)', '(48-53)', '(60-100)']
@@ -99,9 +115,14 @@ if __name__ == "__main__":
     # Example webcam setup
     cap = cv2.VideoCapture(0)
     
+    if not cap.isOpened():
+        print("Error: Could not open webcam.")
+        exit()
+    
     while True:
         ret, frame = cap.read()
         if not ret:
+            print("Error: Failed to capture frame.")
             break
 
         # Detect gender and age
